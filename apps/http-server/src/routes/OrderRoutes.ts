@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import express, { Router } from "express"
 import { authMiddleware } from "../middleware/middlware"
+import { rateLimitMiddleware } from "../middleware/rateLimitMiddleware"
 import { OrderSchema } from "../types/zod"
 import { CloseOrder, createOrder } from "../controllers/OrderCOntroller"
 import { Order } from "../types/types";
@@ -10,7 +11,7 @@ const router: Router = express.Router()
 
 
 
-router.post("/trade", authMiddleware, (req, res) => {
+router.post("/trade", rateLimitMiddleware, authMiddleware, (req, res) => {
     const userId = req.userId
     if (!userId) {
         res.status(403).json({
@@ -50,7 +51,7 @@ router.post("/trade", authMiddleware, (req, res) => {
 })
 
 
-router.get("/open-orders", authMiddleware, async (req, res) => {
+router.get("/open-orders", rateLimitMiddleware, authMiddleware, async (req, res) => {
     const userId = req.userId;
     if (!userId) {
         res.status(403).json({
@@ -87,7 +88,7 @@ router.get("/open-orders", authMiddleware, async (req, res) => {
 
 })
 
-router.post("/close-order/:orderId", authMiddleware, async (req, res) => {
+router.post("/close-order/:orderId", rateLimitMiddleware, authMiddleware, async (req, res) => {
     const userId = req.userId
     if (!userId) {
         res.status(403).json({
