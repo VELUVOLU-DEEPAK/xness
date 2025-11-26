@@ -1,4 +1,5 @@
 import express, { Router } from "express";
+import { rateLimitMiddleware } from "../middleware/rateLimitMiddleware";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { userSchema } from "../types/zod";
@@ -8,7 +9,7 @@ const router: Router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 // Signup
-router.post("/signup", async (req, res) => {
+router.post("/signup", rateLimitMiddleware, async (req, res) => {
   try {
     const parsed = userSchema.safeParse(req.body);
 
@@ -42,7 +43,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // Signin
-router.post("/signin", async (req, res) => {
+router.post("/signin", rateLimitMiddleware, async (req, res) => {
   try {
     const parsed = userSchema.safeParse(req.body);
 
